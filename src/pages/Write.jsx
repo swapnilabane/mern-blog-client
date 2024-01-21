@@ -13,23 +13,48 @@ const Write = () => {
   const { user } = useContext(Context);
   const navigate = useNavigate();
 
-  const uploadFile = async () => {
+  const [img, setImg] = useState(null);
+  const [video, setVideo] = useState(null);
+
+  const uploadFile = async (type, timestamp, signature) => {
+    const folder = type === 'image' ? 'images' : 'videos';
+
     const data = new FormData();
-    data.append('file', file);
+    data.append('file', type === 'image' ? img : video);
+    data.append('timestamp', timestamp);
+    data.append('signature', signature);
+    data.append('api_key', import.meta.env.VITE_REACT_APP_CLOUDINARY_API_KEY);
+    data.append('folder', folder);
 
     try {
-      const response = await axios.post(
-        'https://mern-blog-server-hq7r.onrender.com/api/upload',
-        data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      return response.data.url;
+      let cloudName = import.meta.env.VITE_REACT_APP_CLOUDINARY_CLOUD_NAME;
+      let resourceType = type === 'image' ? 'image' : 'video';
+      let api = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
+      const res = await axios.post(api, data);
+      const { secure_url } = res.data;
+      console.log('File upload success:', secure_url);
+      return secure_url;
     } catch (error) {
-      console.error('Error uploading to Cloudinary:', error.message);
+      console.error('File upload error:', error);
+    }
+  };
+
+  const getSignatureForUpload = async (folder) => {
+    try {
+      const res = await axios.post(
+        'https://mern-blog-server-hq7r.onrender.com/api/sign-upload',
+        { folder }
+      );
+      console.log('Signature response:', res.data);
+
+      if ('timestamp' in res.data && 'signature' in res.data) {
+        return res.data;
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Signature request error:', error);
     }
   };
 
@@ -39,13 +64,24 @@ const Write = () => {
     try {
       setLoading(true);
 
-      const imageUrl = await uploadFile();
+      const { timestamp: imgTimestamp, signature: imgSignature } =
+        await getSignatureForUpload('images');
+      const { timestamp: videoTimestamp, signature: videoSignature } =
+        await getSignatureForUpload('videos');
+
+      const imgUrl = await uploadFile('image', imgTimestamp, imgSignature);
+      const videoUrl = await uploadFile(
+        'video',
+        videoTimestamp,
+        videoSignature
+      );
 
       const newPost = {
         username: user.username,
         title,
         description,
-        photo: imageUrl,
+        img: imgUrl,
+        video: videoUrl,
       };
 
       const res = await axios.post(
@@ -54,9 +90,13 @@ const Write = () => {
       );
 
       res.data && navigate(`/post/${res.data._id}`);
+      setImg(null);
+      setVideo(null);
+
+      console.log('Post creation success!');
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error('Post creation error:', error);
       setLoading(false);
     }
   };
