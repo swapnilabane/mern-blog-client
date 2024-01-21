@@ -12,7 +12,9 @@ const IndividualPosts = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/api/v1/post?user=${username}`);
+        const res = await axios.get(
+          `https://mern-blog-server-hq7r.onrender.com/api/v1/post?user=${username}`
+        );
         setPosts(res.data);
       } catch (error) {
         console.error('Error fetching data:', error);

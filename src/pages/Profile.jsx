@@ -14,7 +14,7 @@ function Profile() {
   const { user, dispatch } = useContext(Context);
   const navigate = useNavigate();
 
-  const publicFolder = 'http://localhost:3000/images/';
+  const publicFolder = 'https://mern-blog-server-hq7r.onrender.com/images/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +33,18 @@ function Profile() {
       data.append('file', file);
       updatedUser.profilePic = filename;
       try {
-        await axios.post('/api/upload', data);
+        await axios.post(
+          'https://mern-blog-server-hq7r.onrender.com/api/upload',
+          data
+        );
       } catch (err) {
         console.log(err);
       }
     }
     try {
       const res = await axios.put(
-        '/api/v1/user/update/' + user._id,
+        'https://mern-blog-server-hq7r.onrender.com/api/v1/user/update/' +
+          user._id,
         updatedUser
       );
       setSuccess(true);
@@ -52,9 +56,12 @@ function Profile() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/v1/user/delete/${user._id}`, {
-        data: { userId: user._id },
-      });
+      await axios.delete(
+        `https://mern-blog-server-hq7r.onrender.com/api/v1/user/delete/${user._id}`,
+        {
+          data: { userId: user._id },
+        }
+      );
 
       dispatch({ type: 'LOGOUT' });
 

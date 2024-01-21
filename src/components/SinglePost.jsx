@@ -10,7 +10,7 @@ const SinglePost = () => {
   const path = location.pathname.split('/')[2];
   const [post, setPost] = useState({});
   const [updateMode, setUpdateMode] = useState(false);
-  const publicFolder = 'http://localhost:3000/images/';
+  const publicFolder = 'https://mern-blog-server-hq7r.onrender.com/images/';
   const { user } = useContext(Context);
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
@@ -21,7 +21,9 @@ const SinglePost = () => {
   useEffect(() => {
     const getPost = async () => {
       try {
-        const res = await axios.get('/api/v1/post/' + path);
+        const res = await axios.get(
+          'https://mern-blog-server-hq7r.onrender.com/api/v1/post/' + path
+        );
         setPost(res.data);
         setTitle(res.data.title);
         setDescription(res.data.description);
@@ -34,9 +36,12 @@ const SinglePost = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/v1/post/delete/${post._id}`, {
-        data: { username: user.username },
-      });
+      await axios.delete(
+        `https://mern-blog-server-hq7r.onrender.com/api/v1/post/delete/${post._id}`,
+        {
+          data: { username: user.username },
+        }
+      );
       navigate('/');
     } catch (err) {
       console.log(err);
@@ -45,11 +50,14 @@ const SinglePost = () => {
 
   const handleUpdate = async () => {
     try {
-      await axios.put(`/api/v1/post/update/${post._id}`, {
-        username: user.username,
-        title,
-        description,
-      });
+      await axios.put(
+        `https://mern-blog-server-hq7r.onrender.com/api/v1/post/update/${post._id}`,
+        {
+          username: user.username,
+          title,
+          description,
+        }
+      );
       setUpdateMode(false);
       window.location.reload();
     } catch (err) {

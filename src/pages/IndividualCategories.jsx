@@ -13,7 +13,7 @@ const IndividualCategories = () => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `/api/v1/post?category=${categoryName.toLowerCase()}`
+          `https://mern-blog-server-hq7r.onrender.com/api/v1/post?category=${categoryName.toLowerCase()}`
         );
         setPosts(res.data);
       } catch (error) {

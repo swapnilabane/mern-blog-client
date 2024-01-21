@@ -15,10 +15,13 @@ function SignIn() {
     e.preventDefault();
 
     try {
-      const res = await axios.post('/api/v1/auth/login', {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        'https://mern-blog-server-hq7r.onrender.com/api/v1/auth/login',
+        {
+          email,
+          password,
+        }
+      );
 
       dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
       localStorage.setItem('user', JSON.stringify(res.data));

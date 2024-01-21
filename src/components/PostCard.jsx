@@ -8,7 +8,7 @@ function capitalizeFirstLetter(string) {
 
 function PostCard({ items }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const publicFolder = 'http://localhost:3000/images/';
+  const publicFolder = 'https://mern-blog-server-hq7r.onrender.com/images/';
 
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);

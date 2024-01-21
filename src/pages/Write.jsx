@@ -3,41 +3,61 @@ import { AiFillFileAdd } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../context/ContextProvider';
 import axios from 'axios';
+import { ThreeDots } from 'react-loader-spinner';
 
 const Write = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { user } = useContext(Context);
   const navigate = useNavigate();
+
+  const uploadFile = async () => {
+    const data = new FormData();
+    data.append('file', file);
+
+    try {
+      const response = await axios.post(
+        'https://mern-blog-server-hq7r.onrender.com/api/upload',
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data.url;
+    } catch (error) {
+      console.error('Error uploading to Cloudinary:', error.message);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newPost = {
-      username: user.username,
-      title,
-      description,
-    };
-
-    if (file) {
-      const data = new FormData();
-      const filename = Date.now() + file.name;
-      data.append('name', filename);
-      data.append('file', file);
-      newPost.photo = filename;
-      try {
-        await axios.post('/api/upload', data);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
     try {
-      const res = await axios.post('/api/v1/post/create', newPost);
+      setLoading(true);
+
+      const imageUrl = await uploadFile();
+
+      const newPost = {
+        username: user.username,
+        title,
+        description,
+        photo: imageUrl,
+      };
+
+      const res = await axios.post(
+        'https://mern-blog-server-hq7r.onrender.com/api/v1/post/create',
+        newPost
+      );
+
       res.data && navigate(`/post/${res.data._id}`);
+      setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setLoading(false);
     }
   };
 
@@ -103,6 +123,19 @@ const Write = () => {
           Publish Post
         </button>
       </form>
+
+      {loading && (
+        <ThreeDots
+          height='80'
+          width='80'
+          radius='9'
+          color='#4fa94d'
+          ariaLabel='three-dots-loading'
+          wrapperStyle={{}}
+          wrapperClassName=''
+          visible={true}
+        />
+      )}
     </div>
   ) : null;
 };

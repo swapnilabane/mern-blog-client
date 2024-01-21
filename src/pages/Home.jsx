@@ -11,7 +11,9 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('/api/v1/post' + search);
+        const res = await axios.get(
+          'https://mern-blog-server-hq7r.onrender.com/api/v1/post' + search
+        );
         setPost(res.data);
       } catch (error) {
         console.error('Error fetching data:', error);

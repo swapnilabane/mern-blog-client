@@ -8,7 +8,9 @@ const Categories = () => {
   useEffect(() => {
     const getCategories = async () => {
       try {
-        const res = await axios.get('/api/v1/categories/');
+        const res = await axios.get(
+          'https://mern-blog-server-hq7r.onrender.com/api/v1/categories/'
+        );
         // console.log(res.data);
         setCategories(res.data);
       } catch (error) {

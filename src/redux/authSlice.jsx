@@ -7,7 +7,10 @@ export const registerAsync = createAsyncThunk(
   'auth/register',
   async (userData) => {
     try {
-      const response = await axios.post('/api/v1/auth/register', userData);
+      const response = await axios.post(
+        'https://mern-blog-server-hq7r.onrender.com/api/v1/auth/register',
+        userData
+      );
       return response.data;
     } catch (error) {
       throw error.response.data;

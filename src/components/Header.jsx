@@ -10,7 +10,7 @@ const Header = () => {
 
   const { dispatch, user } = useContext(Context);
 
-  const publicFolder = 'http://localhost:3000/images/';
+  const publicFolder = 'https://mern-blog-server-hq7r.onrender.com/images/';
 
   const handleLogout = async () => {
     dispatch({ type: 'LOGOUT' });
@@ -37,10 +37,10 @@ const Header = () => {
       <div className='flex gap-5 md:order-2'>
         {user ? (
           <Link to='/profile'>
-            {user && user.profilePic && (
+            {user.profilePic && (
               <img
                 src={publicFolder + user.profilePic}
-                alt='logo'
+                alt='profile'
                 className='w-10 h-10 rounded-full'
               />
             )}
